@@ -1,7 +1,7 @@
 //
 //  CollectionCollectionViewController.swift
 //  CollectionViewDemo
-//
+//  on development mode
 //  Created by Mohamed Sobhi  Fouda on 2/9/18.
 //  Copyright © 2018 Mohamed Sobhi Fouda. All rights reserved.
 //
