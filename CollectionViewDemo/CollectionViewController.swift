@@ -10,7 +10,8 @@ import UIKit
 
 //private let reuseIdentifier = "Cell"
 
-class CollectionViewController: UICollectionViewController {
+class CollectionViewController: UICollectionViewController  {
+
 
     var plantDataItems = [DataItem]()
     var animalDataItems = [DataItem]()
@@ -87,6 +88,8 @@ class CollectionViewController: UICollectionViewController {
         return cell
     }
     
+
+    
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "SectionHeader", for: indexPath) as! DataItemHeader
         var title = ""
@@ -98,18 +101,11 @@ class CollectionViewController: UICollectionViewController {
         return sectionHeader
     }
     
-    @IBAction func addButtonTapped(_ sender: Any) {
-        
-        let item = DataItem(title: "New Item", kind: .Animal, imageName: "default.jpeg")
-        let index = allItems[0].count
-        allItems[0].append(item)
-        let indexPath = IndexPath(item: index, section: 0)
-        collectionView?.insertItems(at: [indexPath])
-    }
+
     
     // MARK: UICollectionViewDelegate
 
-
+/*
     // Uncomment this method to specify if the specified item should be highlighted during tracking
     override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
         return true
@@ -135,7 +131,65 @@ class CollectionViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
     
     }
+*/
+  
 
-
+    @IBAction func addButtonTapped(_ sender: Any) {
+        
+        let item = DataItem(title: "New Item", kind: .Animal, imageName: "default.jpeg")
+        let index = allItems[0].count
+        allItems[0].append(item)
+        let indexPath = IndexPath(item: index, section: 0)
+        collectionView?.insertItems(at: [indexPath])
+    }
+    
+    //moveing cells
+    override func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        
+        let cellToMove = allItems[sourceIndexPath.section][sourceIndexPath.row]
+        
+        allItems[sourceIndexPath.section].remove(at: sourceIndexPath.row)
+        
+        if sourceIndexPath.section == destinationIndexPath.row {
+            
+            
+            allItems[destinationIndexPath.section].insert(cellToMove, at: destinationIndexPath.row)
+            
+        } else {
+            
+            allItems[destinationIndexPath.section].insert(cellToMove, at: destinationIndexPath.row)
+            
+            if destinationIndexPath.section == 0 {
+                cellToMove.kind = Kind.Plant
+            } else {
+                cellToMove.kind = Kind.Animal
+            }
+            
+            
+        }
+        collectionView.reloadData()
+        
+    }
+    
+    //delete Cells
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        func showAlert(title: String) {
+            let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "yes", style: .destructive, handler: { action in collectionView.performBatchUpdates({
+             
+                self.allItems[indexPath.section].remove(at: indexPath.row)
+                self.collectionView?.deleteItems(at: [indexPath])
+                
+            }, completion: nil) }))
+            
+            alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+            
+            self.present(alert, animated: true, completion: nil)
+        }
+        let item = allItems[indexPath.section][indexPath.row]
+        showAlert(title: "Delete '\(item.imageName)'?")
+    }
+    
     
 }
+
